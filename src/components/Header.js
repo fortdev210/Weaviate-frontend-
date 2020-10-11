@@ -12,9 +12,6 @@ import Filter from "./Filtercomp";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    width: "100%",
-    position: "fixed",
-    top: 0,
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -22,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1,
     display: "none",
-    [theme.breakpoints.up("sm")]: {
+    [theme.breakpoints.up("md")]: {
       display: "block",
     },
   },
@@ -65,6 +62,11 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   },
+  [theme.breakpoints.down("sm")]: {
+    appbar: {
+      display: "contents",
+    },
+  },
 }));
 
 export default function SearchAppBar(props) {
@@ -78,7 +80,7 @@ export default function SearchAppBar(props) {
   return (
     <div className={classes.root}>
       <AppBar position="static">
-        <Toolbar>
+        <Toolbar className={classes.appbar}>
           <div onClick={props.fetch}>
             <IconButton
               edge="start"

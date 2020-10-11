@@ -3,6 +3,7 @@ import "./App.css";
 import Accordian from "./components/Accordian";
 import Header from "./components/Header";
 import { BallBeat } from "react-pure-loaders";
+import ScrollTopArrow from "./components/ScrollTopArrow";
 const weaviate = require("weaviate-client");
 
 function App() {
@@ -131,6 +132,7 @@ function App() {
             );
           })}
       </div>
+      <ScrollTopArrow />
     </div>
   );
 }

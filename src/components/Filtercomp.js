@@ -13,13 +13,18 @@ const useStyles = makeStyles((theme) => ({
   colorControl: {
     color: "white",
   },
+  [theme.breakpoints.down("sm")]: {
+    filtergroup: {
+      display: "contents",
+    },
+  },
 }));
 
 export default function GroupedSelect(props) {
   const classes = useStyles();
 
   return (
-    <div>
+    <div className={classes.filtergroup}>
       <FormControl className={classes.formControl}>
         <InputLabel
           htmlFor="grouped-native-select"
