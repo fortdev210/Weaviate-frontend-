@@ -3,3 +3,16 @@
   margin: 0;
   padding: 0;
 }
+
+.container {
+  max-width: 1440px;
+  margin-left: 10px;
+  margin-right: auto;
+  margin-top: 70px;
+}
+.BallBeat {
+  width: 100%;
+  position: fixed;
+  margin-top: 30px;
+  text-align: center;
+}

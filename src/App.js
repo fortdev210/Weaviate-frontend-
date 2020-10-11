@@ -27,6 +27,7 @@ function App() {
       )
       .do()
       .then((res) => {
+        console.log(res);
         setData(res.data.Get.Things.Article);
         setLoading(false);
       })
@@ -34,29 +35,7 @@ function App() {
         console.error(err);
       });
   };
-  // const filterData = (searchVal) => {
-  //   setLoading(true);
-  //   client.graphql
-  //     .get()
-  //     .withClassName("Article")
-  //     .withFields(
-  //       "summary title url publicationDate wordCount HasAuthors{ ... on Author {name}} InPublication{... on Publication{name}}"
-  //     )
-  //     .withWhere({
-  //       path: ["inPublication", "Publication", "name"],
-  //       operator: "Equal",
-  //       valueString: searchVal,
-  //     })
-  //     .do()
-  //     .then((res) => {
-  //       console.log(res);
-  //       setData(res.data.Get.Things.Article);
-  //       setLoading(false);
-  //     })
-  //     .catch((err) => {
-  //       console.error(err);
-  //     });
-  // };
+
   const filterData = (searchVal) => {
     setLoading(true);
     client.graphql
@@ -120,25 +99,25 @@ function App() {
   }, []);
 
   return (
-    <div className="container-lg">
-      <div className="App">
-        <Header
-          fetch={fetchData}
-          filter={filterData}
-          publication={publication}
-          category={category}
-          onPubChange={onPubChange}
-          onCatChange={onCatChange}
-        />
-        <div style={{ margin: "auto", width: "5%" }}>
-          <BallBeat color={"#123abc"} loading={loading} />
-        </div>
+    <div>
+      <Header
+        fetch={fetchData}
+        filter={filterData}
+        publication={publication}
+        category={category}
+        onPubChange={onPubChange}
+        onCatChange={onCatChange}
+      />
+      <div className="BallBeat">
+        <BallBeat color={"#123abc"} loading={loading} />
+      </div>
+      <div className="App container">
         {data &&
           !loading &&
           data.error == null &&
           data.map((element, index) => {
-            if (selpublication && selcategory != "All") {
-              if (element.InPublication[0].name != selpublication) return;
+            if (selpublication && selcategory !== "All") {
+              if (element.InPublication[0].name !== selpublication) return;
             }
             return (
               <Accordian
