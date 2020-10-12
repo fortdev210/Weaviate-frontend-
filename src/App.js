@@ -18,6 +18,7 @@ function App() {
   const [selpublication, setSelpublication] = useState("");
   const [selcategory, setSelcategory] = useState("");
   const [loading, setLoading] = useState(false);
+  const [searchContent, setSearchContent] = useState("");
   const fetchData = () => {
     setLoading(true);
     client.graphql
@@ -39,6 +40,7 @@ function App() {
 
   const filterData = (searchVal) => {
     setLoading(true);
+    setSearchContent(searchVal);
     client.graphql
       .get()
       .withClassName("Article")
@@ -86,6 +88,37 @@ function App() {
       });
   };
 
+  const semanticFilter = (simanticoption) => {
+    debugger;
+    const { filterfrom, weightfrom, filteraway, weightaway } = simanticoption;
+    console.log(filterfrom, weightfrom, filteraway, weightaway);
+    client.graphql
+      .get()
+      .withClassName("Publication")
+      .withFields(
+        "name _semanticPath{ path {concept distanceToNext distanceToPrevious distanceToQuery distanceToResult}}"
+      )
+      .withExplore({
+        concepts: [searchContent],
+        certainty: 0.7,
+        moveAwayFrom: {
+          concepts: [filterfrom],
+          force: parseFloat(weightfrom),
+        },
+        moveTo: {
+          concepts: [filteraway],
+          force: parseFloat(weightaway),
+        },
+      })
+      .do()
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
   const onPubChange = (val) => {
     setSelpublication(val);
   };
@@ -108,6 +141,7 @@ function App() {
         category={category}
         onPubChange={onPubChange}
         onCatChange={onCatChange}
+        semanticFilter={semanticFilter}
       />
       <div className="BallBeat">
         <BallBeat color={"#123abc"} loading={loading} />

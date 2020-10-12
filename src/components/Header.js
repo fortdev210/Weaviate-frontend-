@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
@@ -8,6 +8,10 @@ import { fade, makeStyles } from "@material-ui/core/styles";
 import TouchAppIcon from "@material-ui/icons/TouchApp";
 import SearchIcon from "@material-ui/icons/Search";
 import Filter from "./Filtercomp";
+import Button from "@material-ui/core/Button";
+import Modal from "@material-ui/core/Modal";
+import TextField from "@material-ui/core/TextField";
+import { TableContainer } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,10 +22,16 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
-    display: "none",
-    [theme.breakpoints.up("md")]: {
-      display: "block",
-    },
+    display: "block",
+    width: "142px",
+  },
+  paper: {
+    position: "absolute",
+    width: 400,
+    backgroundColor: theme.palette.background.paper,
+    border: "2px solid #000",
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
   },
   search: {
     position: "relative",
@@ -33,7 +43,6 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 0,
     width: "100%",
     [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(1),
       width: "auto",
     },
   },
@@ -55,12 +64,13 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     transition: theme.transitions.create("width"),
     width: "100%",
-    [theme.breakpoints.up("sm")]: {
+    [theme.breakpoints.up("md")]: {
       width: "12ch",
       "&:focus": {
         width: "20ch",
       },
     },
+    width: "90vw",
   },
   [theme.breakpoints.down("sm")]: {
     appbar: {
@@ -69,14 +79,66 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function rand() {
+  return Math.round(Math.random() * 20) - 10;
+}
+
+function getModalStyle() {
+  const top = 50 + rand();
+  const left = 50 + rand();
+
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+  };
+}
+
 export default function SearchAppBar(props) {
   const classes = useStyles();
 
+  const [modalStyle] = useState(getModalStyle);
+  const [open, setOpen] = useState(false);
+  const [status, setStatus] = useState({
+    filterfrom: "",
+    weightfrom: 0.5,
+    filteraway: "",
+    weightaway: 0.5,
+  });
+  // const [filterfrom, setFilterfrom] = useState("");
+  // const [weightfrom, setWeightfrom] = useState(0.5);
+  // const [filteraway, setFilteraway] = useState("");
+  // const [weightaway, setWeightaway] = useState(0.5);
   const onFilter = (e) => {
     if (e.keyCode === 13) {
       props.filter(e.target.value);
     }
   };
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleChange = (evt) => {
+    const value = evt.target.value;
+    setStatus({ ...status, [evt.target.name]: value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    props.semanticFilter(status);
+    setOpen(false);
+    setStatus({
+      filterfrom: "",
+      weightfrom: 0.5,
+      filteraway: "",
+      weightaway: 0.5,
+    });
+  };
+
   return (
     <div className={classes.root}>
       <AppBar position="static">
@@ -94,6 +156,7 @@ export default function SearchAppBar(props) {
           <Typography className={classes.title} variant="h6" noWrap>
             semantic search
           </Typography>
+
           <Filter
             publication={props.publication}
             category={props.category}
@@ -114,6 +177,63 @@ export default function SearchAppBar(props) {
               onKeyDown={onFilter}
             />
           </div>
+          <Button color="inherit" onClick={handleOpen}>
+            more option
+          </Button>
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="simple-modal-title"
+            aria-describedby="simple-modal-description"
+          >
+            <div style={modalStyle} className={classes.paper}>
+              <form
+                onSubmit={handleSubmit}
+                style={{ display: "table-caption", width: "314px" }}
+              >
+                <label>
+                  <p>Filter From</p>
+                  <TextField
+                    type="text"
+                    name="filterfrom"
+                    value={status.filterfrom}
+                    onChange={handleChange}
+                  />
+                </label>
+                <label>
+                  <p>Weight From</p>
+                  <TextField
+                    type="text"
+                    name="weightfrom"
+                    value={status.weightfrom}
+                    onChange={handleChange}
+                  />
+                </label>
+                <label>
+                  <p>Filter Away</p>
+                  <TextField
+                    type="integer"
+                    name="filteraway"
+                    value={status.filteraway}
+                    onChange={handleChange}
+                  />
+                </label>
+
+                <label>
+                  <p>Weight Away</p>
+                  <TextField
+                    type="text"
+                    name="weightaway"
+                    value={status.weightaway}
+                    onChange={handleChange}
+                  />
+                </label>
+                <Button type="submit" style={{ float: "right" }}>
+                  Filter
+                </Button>
+              </form>
+            </div>
+          </Modal>
         </Toolbar>
       </AppBar>
     </div>
