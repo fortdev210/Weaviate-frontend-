@@ -89,7 +89,6 @@ function App() {
   };
 
   const semanticFilter = (simanticoption) => {
-    debugger;
     const { filterfrom, weightfrom, filteraway, weightaway } = simanticoption;
     console.log(filterfrom, weightfrom, filteraway, weightaway);
     client.graphql

@@ -11,7 +11,6 @@ import Filter from "./Filtercomp";
 import Button from "@material-ui/core/Button";
 import Modal from "@material-ui/core/Modal";
 import TextField from "@material-ui/core/TextField";
-import { TableContainer } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,6 +26,8 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     position: "absolute",
+    right: "50%",
+    top: "50%",
     width: 400,
     backgroundColor: theme.palette.background.paper,
     border: "2px solid #000",
@@ -79,13 +80,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function rand() {
-  return Math.round(Math.random() * 20) - 10;
-}
-
 function getModalStyle() {
-  const top = 50 + rand();
-  const left = 50 + rand();
+  const top = 50;
+  const left = 50;
 
   return {
     top: `${top}%`,
@@ -105,15 +102,13 @@ export default function SearchAppBar(props) {
     filteraway: "",
     weightaway: 0.5,
   });
-  // const [filterfrom, setFilterfrom] = useState("");
-  // const [weightfrom, setWeightfrom] = useState(0.5);
-  // const [filteraway, setFilteraway] = useState("");
-  // const [weightaway, setWeightaway] = useState(0.5);
+
   const onFilter = (e) => {
     if (e.keyCode === 13) {
       props.filter(e.target.value);
     }
   };
+
   const handleOpen = () => {
     setOpen(true);
   };
@@ -203,16 +198,17 @@ export default function SearchAppBar(props) {
                 <label>
                   <p>Weight From</p>
                   <TextField
-                    type="text"
+                    type="number"
                     name="weightfrom"
                     value={status.weightfrom}
                     onChange={handleChange}
+                    InputProps={{ inputProps: { min: 0, max: 1, step: 0.1 } }}
                   />
                 </label>
                 <label>
                   <p>Filter Away</p>
                   <TextField
-                    type="integer"
+                    type="text"
                     name="filteraway"
                     value={status.filteraway}
                     onChange={handleChange}
@@ -222,10 +218,11 @@ export default function SearchAppBar(props) {
                 <label>
                   <p>Weight Away</p>
                   <TextField
-                    type="text"
+                    type="number"
                     name="weightaway"
                     value={status.weightaway}
                     onChange={handleChange}
+                    InputProps={{ inputProps: { min: 0, max: 1, step: 0.1 } }}
                   />
                 </label>
                 <Button type="submit" style={{ float: "right" }}>
