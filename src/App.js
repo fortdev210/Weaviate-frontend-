@@ -13,6 +13,7 @@ function App() {
   });
 
   const [data, setData] = useState([]);
+  const [simanticdata, setSimanticdata] = useState([]);
   const [publication, setPublication] = useState([]);
   const [category, setCategory] = useState([]);
   const [selpublication, setSelpublication] = useState("");
@@ -29,7 +30,6 @@ function App() {
       )
       .do()
       .then((res) => {
-        console.log(res);
         setData(res.data.Get.Things.Article);
         setLoading(false);
       })
@@ -90,7 +90,7 @@ function App() {
 
   const semanticFilter = (simanticoption) => {
     const { filterfrom, weightfrom, filteraway, weightaway } = simanticoption;
-    console.log(filterfrom, weightfrom, filteraway, weightaway);
+    setLoading(true);
     client.graphql
       .get()
       .withClassName("Publication")
@@ -111,7 +111,9 @@ function App() {
       })
       .do()
       .then((res) => {
-        console.log(res);
+        setData([]);
+        setSimanticdata(res.data.Get.Things.Publication);
+        setLoading(false);
       })
       .catch((err) => {
         console.error(err);
@@ -151,18 +153,25 @@ function App() {
           data.error == null &&
           data.map((element, index) => {
             if (selpublication && selcategory !== "All") {
-              if (element.InPublication[0].name !== selpublication) return;
+              if (element.InPublication[0].name !== selpublication) return "";
             }
-            return (
-              <Accordian
-                key={index}
-                title={element.title}
-                content={element.summary}
-                url={element.url}
-                publicationDate={element.publicationDate}
-                wordCount={element.wordCount}
-              />
-            );
+            const generaldata = {
+              title: element.title,
+              content: element.summary,
+              url: element.url,
+              publicationDate: element.publicationDate,
+              wordCount: element.wordCount,
+            };
+            return <Accordian key={index} generaldata={generaldata} />;
+          })}
+        {simanticdata &&
+          !loading &&
+          simanticdata.map((element, index) => {
+            const simanticdata = {
+              name: element.name,
+              semanticPath: element._semanticPath.path,
+            };
+            return <Accordian key={index} simanticdata={simanticdata} />;
           })}
       </div>
       <ScrollTopArrow />
